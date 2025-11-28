@@ -108,12 +108,61 @@ const Index = () => {
               title="Student Schema"
               description="Detailed breakdown of the Student entity structure"
             >
-              <Tabs defaultValue="properties" className="w-full">
+              <Tabs defaultValue="example" className="w-full">
                 <TabsList>
+                  <TabsTrigger value="example">JSON Example</TabsTrigger>
                   <TabsTrigger value="properties">Properties</TabsTrigger>
                   <TabsTrigger value="credentials">Credentials</TabsTrigger>
                   <TabsTrigger value="attestation">Attestation</TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="example" className="space-y-4 mt-6">
+                  <p className="text-muted-foreground">Complete Student schema with all configuration:</p>
+                  <CodeBlock
+                    code={JSON.stringify({
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "type": "object",
+                      "properties": {
+                        "Student": { "$ref": "#/definitions/Student" }
+                      },
+                      "required": ["Student"],
+                      "title": "Student",
+                      "definitions": {
+                        "Student": {
+                          "$id": "#/properties/Student",
+                          "type": "object",
+                          "title": "Student",
+                          "required": ["fullName", "dob", "gender", "mobile", "email", "instituteName"],
+                          "properties": {
+                            "fullName": { "type": "string", "title": "Full Name" },
+                            "instituteName": {
+                              "type": "string",
+                              "enum": ["IIT Delhi", "IIT Bombay", "NIT Trichy", "Delhi University", "Anna University"]
+                            },
+                            "degree": {
+                              "type": "string",
+                              "enum": ["B.Tech", "M.Tech", "B.Sc", "M.Sc", "MBA", "PhD"]
+                            },
+                            "grade": { "type": "string" },
+                            "dob": { "type": "string", "format": "date" },
+                            "gender": { "type": "string", "enum": ["Male", "Female", "Other"] },
+                            "mobile": { "type": "string", "title": "Mobile number" },
+                            "email": { "type": "string", "title": "Email ID" }
+                          }
+                        }
+                      },
+                      "_osConfig": {
+                        "systemFields": ["osCreatedAt", "osCreatedBy", "osUpdatedAt", "osUpdatedBy", "_osCredentialId", "_osAttestedData"],
+                        "privateFields": ["$.email", "$.mobile", "$.dob", "$.gender"],
+                        "uniqueIndexFields": ["email"],
+                        "roles": ["Teacher"],
+                        "inviteRoles": ["Teacher"],
+                        "ownershipAttributes": [{ "userId": "$.email", "email": "$.email", "mobile": "$.mobile" }]
+                      }
+                    }, null, 2)}
+                    language="json"
+                  />
+                </TabsContent>
 
                 <TabsContent value="properties" className="space-y-4 mt-6">
                   <InfoCard title="Required Fields" variant="warning">
@@ -282,11 +331,65 @@ const Index = () => {
               title="Teacher Schema"
               description="Detailed breakdown of the Teacher entity structure"
             >
-              <InfoCard title="Required Fields" variant="warning">
-                The Teacher schema has 5 mandatory fields: name, mobile, email, subject, and instituteName.
-              </InfoCard>
+              <Tabs defaultValue="example" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="example">JSON Example</TabsTrigger>
+                  <TabsTrigger value="properties">Properties</TabsTrigger>
+                </TabsList>
 
-              <div className="grid gap-4 mt-6">
+                <TabsContent value="example" className="space-y-4 mt-6">
+                  <p className="text-muted-foreground">Complete Teacher schema with all configuration:</p>
+                  <CodeBlock
+                    code={JSON.stringify({
+                      "$schema": "http://json-schema.org/draft-07/schema",
+                      "type": "object",
+                      "properties": {
+                        "Teacher": { "$ref": "#/definitions/Teacher" }
+                      },
+                      "required": ["Teacher"],
+                      "title": "Teacher",
+                      "definitions": {
+                        "Teacher": {
+                          "$id": "#/properties/Teacher",
+                          "type": "object",
+                          "title": "The Teacher Schema",
+                          "required": ["name", "mobile", "email", "subject", "instituteName"],
+                          "properties": {
+                            "name": { "type": "string" },
+                            "gender": { "type": "string" },
+                            "mobile": { "type": "string" },
+                            "email": { "type": "string" },
+                            "subject": { "type": "string" },
+                            "instituteName": {
+                              "type": "string",
+                              "enum": ["IIT Delhi", "IIT Bombay", "NIT Trichy", "Delhi University", "Anna University"]
+                            }
+                          }
+                        }
+                      },
+                      "_osConfig": {
+                        "systemFields": ["osCreatedAt", "osUpdatedAt", "osCreatedBy", "osUpdatedBy"],
+                        "uniqueIndexFields": ["email", "mobile"],
+                        "privateFields": ["$.instituteName", "$.email", "$.mobile", "$.gender"],
+                        "roles": ["admin"],
+                        "inviteRoles": ["admin"],
+                        "ownershipAttributes": [{
+                          "email": "/email",
+                          "mobile": "/mobile",
+                          "userId": "/mobile"
+                        }]
+                      }
+                    }, null, 2)}
+                    language="json"
+                  />
+                </TabsContent>
+
+                <TabsContent value="properties" className="space-y-4 mt-6">
+                  <InfoCard title="Required Fields" variant="warning">
+                    The Teacher schema has 5 mandatory fields: name, mobile, email, subject, and instituteName.
+                  </InfoCard>
+
+                  <div className="grid gap-4 mt-6">
                 <SchemaProperty
                   name="name"
                   type="string"
@@ -329,6 +432,8 @@ const Index = () => {
                   description="The educational institution where the teacher is employed. Marked as private."
                 />
               </div>
+                </TabsContent>
+              </Tabs>
             </SchemaSection>
           </section>
 
